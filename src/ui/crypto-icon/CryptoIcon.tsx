@@ -29,7 +29,7 @@ export default function CryptoIcon({
         fontWeight: '600',
         textAlign: 'center',
         fontSize: size === 'm' ? (20 * parseInt(height)) / 30 : (30 * parseInt(height)) / 30,
-        backgroundColor: size === 'm' ? '#6E1AEB' : 'transparent',
+        backgroundColor: size === 'm' ? '#cdaffa' : 'transparent',
         borderRadius: '50%'
       }}>
         {svg}

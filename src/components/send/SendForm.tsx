@@ -1,9 +1,71 @@
 import { Button, Input, Sheet, Stack, ToggleButtonGroup, Typography } from "@mui/joy"
-import { useState } from "react";
+import { useState, useContext, useEffect } from 'react';
 import CryptoIcon from "@ui/crypto-icon/CryptoIcon";
 
+import TestNetContext from '@/src/lib/context/testnet.context';
+import { useConfig } from "wagmi";
+import { useMetaMask } from "metamask-react";
+import { getBalance } from "wagmi/actions";
+
+import { type GetBalanceReturnType } from '@wagmi/core'
+
+const defaultBalance = [
+  {
+    decimals: 0,
+    symbol: '',
+    value: BigInt(0),
+    formatted: ''
+  } as GetBalanceReturnType,
+  'loading'
+]
+
 export const SendForm = () => {
-  const [chain, setChain] = useState(null)
+  const config = useConfig();
+  const {testNet} = useContext(TestNetContext);
+  const chains = config.chains.filter((chain) => {
+    if (testNet) {return !!chain.testnet}
+    if (!testNet) {return !chain.testnet}
+  })
+
+
+  const { account } = useMetaMask();
+  const [balance, setBalance] = useState(defaultBalance);
+  const [currency, setCurrency] = useState(chains[0]); 
+  // const [sendTo, setSendTo] = useState('');
+
+
+  const handleCurrency = (_: any, newValue: string | null) => {
+    if (!newValue) {return}
+    chains.forEach((chain) => {
+      if (chain.id === +newValue) {
+        setCurrency(chain)
+      }
+    })
+  }
+
+  const handleSend = () => {
+
+  }
+
+  useEffect(() => {
+    setBalance(defaultBalance)
+    getBalance(config, {
+      address: account as `0x${string}`,
+      chainId: currency.id
+     }).then((balance) => {
+      setBalance([balance, 'available'])
+     })
+  }, [currency])
+  
+  
+
+
+  useEffect(() => {
+    setCurrency(chains[0])
+  }, [testNet, account])
+
+
+
 
 
   return (
@@ -38,29 +100,25 @@ export const SendForm = () => {
           color="neutral"
           spacing={1}
           variant="outlined"
-          value={chain}
-          onChange={(event, newValue) => {
-            setChain(newValue);
-          }}
+          value={String(currency.id)}
+          onChange={handleCurrency}
         > 
-          <Button 
-            sx={{py: 0}}
-            startDecorator={ <CryptoIcon height="25px" width="25px" size="m" currencySymbol="ETH"/>} 
-            value="ETH">
-            ETH
-          </Button>
-          <Button 
-            sx={{py: 0}}
-            startDecorator={ <CryptoIcon height="25px" width="25px" size="m" currencySymbol="BNB"/>} 
-            value="BNB">
-            BNB
-          </Button>
+            {chains.map((chain) => {
+              const name = chain.nativeCurrency.symbol
+              return <Button 
+              key={name}
+              sx={{py: 0}}
+              startDecorator={ <CryptoIcon height="25px" width="25px" size="m" currencySymbol={name}/>} 
+              value={String(chain.id)}>
+                {name}
+              </Button>
+            })}
         </ToggleButtonGroup>
         <Typography
         mt={1}
         mb={2}
         level="title-sm">
-          Availble: 0.4444
+          Available: {balance[1] === 'available' ? balance[0].formatted : '...'} {currency.nativeCurrency.symbol}
         </Typography>
         <Input
         size="lg"
@@ -68,7 +126,7 @@ export const SendForm = () => {
         <Stack
         mt={2}
         direction="row">
-            <Button  size="lg" onClick={function(){}}>Send</Button>
+            <Button  size="lg" onClick={handleSend}>Send</Button>
         </Stack>
       </Stack>
           

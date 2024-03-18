@@ -7,7 +7,8 @@ import {
   useConnect, 
   useConnectors, 
   useDisconnect, 
-  useConfig 
+  useConfig,
+  useAccountEffect,
 } from 'wagmi'
 import { sepolia, mainnet, bsc } from 'viem/chains'
 
@@ -15,6 +16,7 @@ import { Link, Stack, Typography } from '@mui/joy';
 
 import { SendForm } from '@components/send/SendForm'
 import {ConnectMetamask} from '@components/start/ConnectMetamask';
+import { useMetaMask } from 'metamask-react';
 
 const appContainerStyles = {
   flexGrow: 1,
@@ -29,13 +31,19 @@ const appContainerStyles = {
   }
 }
 
-function App() {
+export default function Page() {
 
-  const account = useAccount()
-  const config = useConfig()
-  const { connectors, connect, status, error } = useConnect()
-  const cont = useConnectors()
-  const { disconnect } = useDisconnect()
+  // console.log('render')
+
+  const {status} = useMetaMask()
+
+  // const {isReconnecting, isConnecting, isConnected} = useAccount()
+  // const config = useConfig()
+  // const { connectors, connect, status, error } = useConnect()
+  // const cont = useConnectors()
+  // const { disconnect } = useDisconnect()
+
+  // console.log('isConnected', isConnected)
 
   // console.log('account', account)
   // console.log('connectors', cont, config, status, connectors)
@@ -45,15 +53,24 @@ function App() {
   // console.log('sepolia', mainnet)
   // console.log('sepolia', bsc)
 
-  console.log('status', !account.isReconnecting, !account.isConnecting, !account.isConnected)
-  console.log('status', !(account.isReconnecting || account.isConnecting) && !account.isConnected)
+  // if (!isReconnecting && !isConnecting && isConnected) {
+  //   console.log('metamask connected, loading...')
+  // } 
+
+  // if ((!isReconnecting || !isConnecting) && !isConnected ) {
+  //   console.log('metamask not connected')
+  // }
+
+
+  const connected = status === 'connected'
+
   return (
     <Stack  sx={appContainerStyles}>
 
-      {account.isConnecting || account.isReconnecting ? <Typography level="h1">SENT SKELETON</Typography> : null}
+      {/* {account.isConnecting || account.isReconnecting ? <Typography level="h1">SENT SKELETON</Typography> : null} */}
 
-      {!account.isReconnecting && !account.isConnecting && account.isConnected && <SendForm/>}
-      {(!account.isReconnecting || !account.isConnecting) && !account.isConnected && <ConnectMetamask/>}
+      {connected && <SendForm/>}
+      {!connected ? <ConnectMetamask/> : null}
       
       
       {/* <div>
@@ -92,4 +109,4 @@ function App() {
   )
 }
 
-export default App
+

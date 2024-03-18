@@ -5,11 +5,11 @@ import {
   createStorage  
 } from 'wagmi'
 import { mainnet, sepolia, bsc } from 'wagmi/chains'
-import { injected } from 'wagmi/connectors'
+// import { injected } from 'wagmi/connectors'
 
 const wagmiConfig = createConfig({
   chains: [mainnet, sepolia, bsc],
-  connectors: [injected()],
+  connectors: [],
   ssr: true,
   storage: createStorage({  
     storage: cookieStorage, 
