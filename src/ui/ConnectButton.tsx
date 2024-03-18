@@ -2,14 +2,14 @@ import { Button, CircularProgress } from '@mui/joy';
 
 import LinkOutlinedIcon from '@mui/icons-material/LinkOutlined';
 
-export const ConnectButton = ({loading}: {loading?: boolean | undefined}) => {
-  console.log(typeof loading)
+export const ConnectButton = ({loading, onClick}: {loading?: boolean | undefined, onClick: () => void}) => {
 
   return (
     <>
       { !loading && 
       <Button
       size="lg" 
+      onClick={onClick}
       endDecorator={<LinkOutlinedIcon/>}>
         Connect MetaMask
       </Button>}

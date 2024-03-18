@@ -8,7 +8,7 @@ import { cookieToInitialState } from 'wagmi'
 
 import { Inter } from 'next/font/google'
 import { Stack } from '@mui/joy'
-import Navbar from '@components/navbar/Navbar'
+import Navbar from '../components/navbar/Navbar'
 
 
 import { Providers } from './providers'
