@@ -27,13 +27,31 @@ export function ConnectMetamask() {
           xs: 'center',
           md: 'flex-start'
         }}
+        pt={5}
       >
-        <Typography level="h1" mt={5}>
+
+        <Typography mb={2} level="body-sm" color="neutral">
+          Тестовое задание
+        </Typography>
+        <Typography level="h1">
             Start Using
         </Typography>
         <Typography mb={2} level="h1">
           Transactions dApp
         </Typography>
+        <Stack direction="row" gap={2} mb={2} alignItems="center">
+          <Typography level="body-md">
+            Тимершин Абдулла
+          </Typography>
+          <NextLink href="https://github.com/flawlessattila/dapp-transactions">
+            <Link component={'span'} variant="soft">
+              GitHub repo
+            </Link>
+          </NextLink>
+        </Stack>  
+      
+       
+        
 
       { status === 'initializing' && <LinearProgress sx={{width:'100%'}} />}
 
