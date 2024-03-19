@@ -1,6 +1,9 @@
 'use client';
-import React, { useEffect, useState } from 'react';
 import { appName } from '@/app.config';
+
+import React, { useEffect, useState, useContext } from 'react';
+import { useMetaMask } from 'metamask-react';
+
 import {
   Typography, Stack, IconButton,
   MenuButton,
@@ -11,38 +14,47 @@ import {
   Chip,
   CircularProgress
 } from '@mui/joy';
+
+import { useConfig } from 'wagmi';
+import { getBalance } from '@wagmi/core'
+
+import { stringShorter } from '@lib/utils/stringShorter';
+import TestNetContext from '@lib/context/testnet.context';
+import { MobileMenu } from './MobileMenu';
+import { Account } from '@ui/user/Account';
+import CryptoIcon from '@ui/crypto-icon/CryptoIcon';
+
 import AnimationOutlinedIcon from '@mui/icons-material/AnimationOutlined';
 import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
 import CodeOffOutlinedIcon from '@mui/icons-material/CodeOffOutlined';
-import { Account } from '@ui/user/Account';
-import { stringShorter } from '@lib/utils/stringShorter';
 import CodeOutlinedIcon from '@mui/icons-material/CodeOutlined';
-import CryptoIcon from '@ui/crypto-icon/CryptoIcon';
-import { useMetaMask } from 'metamask-react';
-import { MobileMenu } from './MobileMenu';
-import { useConfig } from 'wagmi';
-import { getBalance } from '@wagmi/core'
-// import { useLocalStorage } from '@lib/hooks/local-storage.hook';
 
-import TestNetContext from '@/src/lib/context/testnet.context';
-import { useContext } from 'react';
+const navbarContainerStyles = {
+  flexDirection: {
+    sm: 'column',
+    md: 'row'
+  },
+  display: { sm: 'flex', },
+  zIndex: '999',
+  top: 0,
+  position: 'sticky',
+  width: '100dvw',
+  py: 2,
+  backgroundColor: 'background.body',
+  borderBottom: '1px solid',
+  borderColor: 'divider',
+}
 
 export default function Navbar() {
-  const [menu, setMenu] = useState(false);
-  const { status, account} = useMetaMask();
+
   const [balanceChips, setBalanceChips] = useState<React.ReactElement[] | null>([]);
+  const [menu, setMenu] = useState(false);
+  const {status, account} = useMetaMask();
 
   const {testNet, setTestNet} = useContext(TestNetContext);
   
   const config = useConfig();
 
-  console.log(testNet);
-
-  // useEffect(() => {
-  //   if (window) {
-  //     window.testtt = config
-  //   }
-  // }, [])
 
   const updateBalance = async () => {
 
@@ -104,21 +116,7 @@ export default function Navbar() {
         gap={1}
         p={2}
         justifyContent="space-between"
-        sx={{
-          flexDirection: {
-            sm: 'column',
-            md: 'row'
-          },
-          display: { sm: 'flex', },
-          zIndex: '999',
-          top: 0,
-          position: 'sticky',
-          width: '100dvw',
-          py: 2,
-          backgroundColor: 'background.body',
-          borderBottom: '1px solid',
-          borderColor: 'divider',
-        }}
+        sx={navbarContainerStyles}
       >
         <Stack
           direction="row"

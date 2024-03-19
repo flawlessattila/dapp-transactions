@@ -1,4 +1,6 @@
 'use client';
+import { useContext } from 'react';
+
 import {
   Stack,
   Drawer,
@@ -6,14 +8,12 @@ import {
   List, ListItemContent,
   ListItem, ListItemButton
 } from '@mui/joy';
+
 import { Account } from '@ui/user/Account';
 import CodeOutlinedIcon from '@mui/icons-material/CodeOutlined';
 import CodeOffOutlinedIcon from '@mui/icons-material/CodeOffOutlined';
-import { useLocalStorage } from '@/src/lib/hooks/local-storage.hook';
 
-
-import TestNetContext from '@/src/lib/context/testnet.context';
-import { useContext } from 'react';
+import TestNetContext from '@lib/context/testnet.context';
 
 
 export function MobileMenu({ open, address, chains, onClose }: {

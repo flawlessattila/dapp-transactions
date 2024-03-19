@@ -1,14 +1,16 @@
 'use client'
 
+import { colorSchemes } from '@/app.config';
+import wagmiConfig from '@/wagmi.config';
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useState, } from 'react'
+import { useLocalStorage } from '@lib/hooks/local-storage.hook';
+
+import { MetaMaskProvider } from 'metamask-react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { type State, WagmiProvider } from 'wagmi'
 import { CssBaseline, extendTheme, CssVarsProvider} from '@mui/joy';
-import { colorSchemes } from '@/app.config';
-import { MetaMaskProvider } from 'metamask-react';
-import wagmiConfig from './wagmi.config';
-import { useLocalStorage } from '../lib/hooks/local-storage.hook';
+
 import TestNetContext from '@lib/context/testnet.context';
 
 const customTheme = extendTheme(colorSchemes);
