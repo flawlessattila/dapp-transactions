@@ -1,20 +1,24 @@
-import { Button, FormControl, FormHelperText, FormLabel, Sheet, Input, Snackbar, Stack, ToggleButtonGroup, Typography } from "@mui/joy"
 import { useState, useContext, useEffect } from 'react';
-import CryptoIcon from "@ui/crypto-icon/CryptoIcon";
-
-import TestNetContext from '@/src/lib/context/testnet.context';
 import { useConfig } from "wagmi";
 import { useMetaMask } from "metamask-react";
-import { getBalance, getConnections } from "wagmi/actions";
+import { useForm, Controller, FieldValues } from "react-hook-form"
 
+import { 
+  Button, FormControl, 
+  FormLabel, Sheet, Input, 
+  Snackbar, Stack, 
+  ToggleButtonGroup, 
+  CircularProgress, Typography 
+} from "@mui/joy"
+import CryptoIcon from "@ui/crypto-icon/CryptoIcon";
+
+import { isAddress, parseEther } from "viem";
 import { type GetBalanceReturnType, sendTransaction } from '@wagmi/core'
+import { injected } from "wagmi/connectors";
+import { connect, getBalance, getConnections } from "wagmi/actions";
 
-import { isAddress, isAddressEqual, parseEther } from "viem";
-import { useForm, SubmitHandler, Controller } from "react-hook-form"
-
+import TestNetContext from '@lib/context/testnet.context';
 import { parseFloatInput } from "@lib/utils/parseFloatInput";
-
-
 
 const FormSheetStyles = {
   p: 2,
@@ -46,8 +50,15 @@ const defaultBalance = {
   status: 'loading'
 }
 
-const intialValues = {
-  amount: "0",
+const defaultResult = {
+  open: false,
+  success: false,
+  message: '',
+  status: 'idle'
+}
+
+const defaultForm = {
+  amount: "",
   address: ""
 };
 
@@ -56,34 +67,30 @@ export const SendForm = () => {
   const config = useConfig();
   const connections = getConnections(config)
 
-  console.log('formConfig', config)
-  console.log('con', connections)
-
   const {testNet} = useContext(TestNetContext);
   const chains = config.chains.filter((chain) => {
     if (testNet) {return !!chain.testnet}
     if (!testNet) {return !chain.testnet}
   })
 
-
-
-
-
   const {
+    reset,
     control,
     register,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useForm()
 
-  const { account } = useMetaMask();
+  const { account, chainId: accountChain } = useMetaMask();
+  
   const [balance, setBalance] = useState(defaultBalance);
   const [currency, setCurrency] = useState(chains[0]); 
 
+  const [result, setResult] = useState(defaultResult);
 
-  const [sendTo, setSendTo] = useState('');
-  const [amount, setAmount] = useState('0');
+  if (!account) {
+    return;
+  }
 
 
   const handleCurrency = (_: any, newValue: string | null) => {
@@ -95,37 +102,103 @@ export const SendForm = () => {
     })
   }
 
-  const handleSend = () => {
-    sendTransaction(config, {
-      connector: connections[0].connector,
-      chainId: currency.id,
-      to: sendTo as `0x${string}`,
-      value: parseEther(amount),
-    }).then((result) => {
-      console.log(result)
-    }).catch((...errors) => {
-      // errors[0].cause.name === 'UserRejectedRequestError'
-      console.log(errors)
-    })
-  }
-
   
-  const onSubmit = (data) => {
-    console.log(data)
+  const onSubmit = async (data: FieldValues) => {
+    console.log('[FORM SUBMIT]', data)
+    setResult({
+      ...defaultResult,
+      status: 'loading'
+    })
+
+    if (!accountChain) {
+      throw new Error('[FORM] Account chainId is not available');
+    }
+
+    try {
+
+      const connections = getConnections(config)
+
+      if (connections.length === 0) {
+        console.log('[CONNECTOR STATUS] CONNECTION NEED')
+        const connectResult = await connect(config, { connector: injected() })
+        console.log('[CONNECTOR RESULT] CONNECTED', connectResult)
+      } else {
+        console.log('[CONNECTOR STATUS] OK', connections)
+      }
+
+      const connector = connections?.[0]?.connector;
+
+      if (!connector) {
+        throw new Error('[CONNECTOR] NOT FOUND');
+      }
+
+      if (+accountChain !== currency.id) {
+        console.log('[CHAIN ID STATUS] SWITCH NEED', `${accountChain} to -> ${currency.id}`)
+
+        const switchResult = await connector?.switchChain?.({chainId: currency.id})
+    
+        console.log('[CHAIN ID RESULT] SWITCHED', switchResult)
+      } else {
+        console.log('[CHAIN ID STATUS] OK')
+      }
+  
+      console.log('[TRANSACTION] START')
+      const transactionResult = await sendTransaction(config, {
+        connector,
+        chainId: currency.id,
+        to: data.address as `0x${string}`,
+        value: parseEther(data.amount),
+      })
+      console.log('[TRANSACTION] RESULT:', transactionResult)
+
+      reset();
+      setResult({
+        open: true,
+        success: true,
+        message: 'Success transaction!',
+        status: 'idle'
+      })
+
+    } catch (error: any) {
+
+      console.log('[TRANSACTION ERROR]')
+      console.dir(error)
+      console.log(typeof error)
+
+      if (!error) {
+        return;
+      }
+
+      if (error?.cause?.name === 'UserRejectedRequestError') {
+        setResult({
+          open: true,
+          success: false,
+          message: 'User rejected',
+          status: 'idle'
+        })
+        return;
+      }
+
+      setResult({
+        open: true,
+        success: false,
+        message: error?.cause?.shortMessage || 'Transaction finished with error',
+        status: 'idle'
+      })
+
+     
+    } 
   }
 
-  // function handleInput() {
-  //   console.log(arguments)
-  // }
-
-
- 
   useEffect(() => {
 
+    // only for debug
     if(window) {
-      window.con1 = config
-      window.con2 = connections
-      window.con3 = getConnections
+      const windowObj: Window & {dConfig?: any, dConnections?: any, dGetConnections?: any, dParseEther?: any} = window;
+      windowObj.dConfig = config
+      windowObj.dConnections = connections
+      windowObj.dGetConnections = getConnections
+      windowObj.dParseEther = parseEther
     }
 
     setBalance(defaultBalance)
@@ -144,6 +217,7 @@ export const SendForm = () => {
 
   useEffect(() => {
     setCurrency(chains[0])
+    reset();
   }, [testNet, account])
 
 
@@ -187,6 +261,7 @@ export const SendForm = () => {
                 <FormControl error={!!errors.amount}>
                   <FormLabel>Amount</FormLabel>
                   <Input 
+                        required
                         type="text"
                         value={formatted}
                         placeholder="0.000001" 
@@ -203,13 +278,14 @@ export const SendForm = () => {
             <FormControl>
               <FormLabel>Address</FormLabel>
               <Input
+                required
                 type="text"
-                defaultValue={intialValues.address} 
+                defaultValue={defaultForm.address} 
                 placeholder="0x000000000000..."
                 {...register('address', {
                   validate: {
                     notAddress: (value) => isAddress(value),
-                    yours: (value) => value === account,
+                    yours: (value) => +value !== +account,
                   }
                 })} 
               />
@@ -221,7 +297,8 @@ export const SendForm = () => {
             mt={2}
             direction="row"
           >
-              <Button  size="lg" type="submit">Send</Button>
+              {result.status === 'idle' && <Button  size="lg" type="submit">Send</Button>}
+              {result.status === 'loading' && <Button endDecorator={<CircularProgress/>} size="lg" disabled>Proccessing</Button>}
           </Stack>
         </form>
       </Stack>
@@ -232,11 +309,12 @@ export const SendForm = () => {
           horizontal: 'left'
         }}
         variant="solid"
-        color="danger"
-        autoHideDuration={1500}
-        open={true}
+        color={result.success ? 'success' : 'danger'}
+        autoHideDuration={3000}
+        open={result.open}
+        onClose={() => {setResult((prevState) => ({...prevState, open: false}))}}
       >
-        Request Error
+        {result.message}
       </Snackbar>
      
     </Sheet>

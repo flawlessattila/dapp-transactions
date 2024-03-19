@@ -1,9 +1,7 @@
 import { Button, CircularProgress } from '@mui/joy';
-
 import LinkOutlinedIcon from '@mui/icons-material/LinkOutlined';
 
 export const ConnectButton = ({loading, onClick}: {loading?: boolean | undefined, onClick: () => void}) => {
-
   return (
     <>
       { !loading && 

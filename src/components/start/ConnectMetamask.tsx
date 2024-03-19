@@ -1,21 +1,16 @@
 'use client';
 
-import { useEffect, useState } from 'react'
 import NextLink from 'next/link';
+import { useMetaMask } from 'metamask-react';
 import { LinearProgress, Link, Stack, Typography } from '@mui/joy';
 import { ConnectButton } from '@ui/ConnectButton';
-import { useMetaMask } from 'metamask-react';
-
-
-import { injected } from 'wagmi/connectors';
-import { useAccount, useConnect, useConnectors } from 'wagmi';
 
 export function ConnectMetamask() {
 
-  const { status, connect, account, chainId, ethereum } = useMetaMask();
+  const { status, connect} = useMetaMask();
   
   return (
-  <Stack 
+    <Stack 
       textAlign={{
         xs: 'center',
         md: 'left' 
@@ -24,13 +19,15 @@ export function ConnectMetamask() {
         xs: 'column',
         md: 'row'
       }}
-        justifyContent="center" 
-        alignItems="center"
+      justifyContent="center" 
+      alignItems="center"
     >
-      <Stack alignItems={{
+      <Stack
+        alignItems={{
           xs: 'center',
           md: 'flex-start'
-      }}>
+        }}
+      >
         <Typography level="h1" mt={5}>
             Start Using
         </Typography>
@@ -57,10 +54,14 @@ export function ConnectMetamask() {
         </>}
 
       </Stack>
-      <img style={{
-        display: 'block',
-        maxWidth: '60%'
-      }} src="/static/cosmonaut.svg" alt="Cosmonaut" />
+      <img 
+        style={{
+          display: 'block',
+          maxWidth: '60%'
+        }} 
+        src="/static/cosmonaut.svg"
+        alt="Cosmonaut"
+      />
     </Stack>
   )
 }

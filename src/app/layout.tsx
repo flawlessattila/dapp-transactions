@@ -13,7 +13,7 @@ import Navbar from '../components/navbar/Navbar'
 
 import { Providers } from './providers'
 import { appName } from '@/app.config'
-import wagmiConfig from '@app/wagmi.config';
+import wagmiConfig from '@/wagmi.config';
 
 const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
