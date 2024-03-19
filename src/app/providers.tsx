@@ -1,7 +1,8 @@
 'use client'
 
+
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { createContext, useState, type ReactNode } from 'react'
+import { useState, } from 'react'
 import { type State, WagmiProvider } from 'wagmi'
 import { CssBaseline, extendTheme, CssVarsProvider} from '@mui/joy';
 import { colorSchemes } from '@/app.config';
@@ -25,14 +26,14 @@ export function Providers({children, initialState} : Props) {
   return (
     <WagmiProvider config={wagmiConfig} initialState={initialState}>
        <TestNetContext.Provider value={{testNet, setTestNet}}>
-      <MetaMaskProvider>
-        <QueryClientProvider client={queryClient}>
-          <CssVarsProvider theme={customTheme}>
-            <CssBaseline/>
-            {children}
-          </CssVarsProvider>
-        </QueryClientProvider>
-      </MetaMaskProvider>
+        <MetaMaskProvider>
+          <QueryClientProvider client={queryClient}>
+            <CssVarsProvider theme={customTheme}>
+              <CssBaseline/>
+              {children}
+            </CssVarsProvider>
+          </QueryClientProvider>
+        </MetaMaskProvider>
       </TestNetContext.Provider>
     </WagmiProvider>
   )

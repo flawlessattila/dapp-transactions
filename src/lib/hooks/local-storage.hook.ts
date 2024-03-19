@@ -1,33 +1,52 @@
-import { useState, useEffect } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 
-export const useLocalStorage = <T>(key: string, initialValue: T) => {
-  const [storedValue, setStoredValue] = useState<T | null>();
+export function useLocalStorage<T>(key: string, initialValue: T): [T, Dispatch<SetStateAction<T>>] {
+  
+    const [storedValue, setStoredValue] = useState(initialValue);
+    // We will use this flag to trigger the reading from localStorage
+    const [firstLoadDone, setFirstLoadDone] = useState(false);
 
-  const setValue = (value: T) => {
-    window.localStorage.setItem(key, JSON.stringify(value));
-  };
+    // Use an effect hook in order to prevent SSR inconsistencies and errors.
+    // This will update the state with the value from the local storage after
+    // the first initial value is applied.
+    useEffect(() => {
+        const fromLocal = () => {
+            if (typeof window === 'undefined') {
+                return initialValue;
+            }
+            try {
+                const item = window.localStorage.getItem(key);
+                return item ? JSON.parse(item) as T : initialValue;
+            } catch (error) {
+                console.error(error);
+                return initialValue;
+            }
+        };
+        
+        // Set the value from localStorage
+        setStoredValue(fromLocal);
+        // First load is done
+        setFirstLoadDone(true);
+    }, [initialValue, key]);
 
-  useEffect(() => {
-    const value = window.localStorage.getItem(key);
+    // Instead of replacing the setState function, react to changes.
+    // Whenever the state value changes, save it in the local storage.
+    useEffect(() => {
+        // If it's the first load, don't store the value.
+        // Otherwise, the initial value will overwrite the local storage.
+        if (!firstLoadDone) {
+            return;
+        }
 
-    if (value) {
-      try {
-        const parsed = JSON.parse(value) as T;
-        setStoredValue(parsed);
-      } catch (error) {
-        console.log(error);
-        setStoredValue(initialValue);
-      }
-    } else {
-      setStoredValue(initialValue);
-    }
-  }, []);
+        try {
+            if (typeof window !== 'undefined') {
+                window.localStorage.setItem(key, JSON.stringify(storedValue));
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }, [storedValue, firstLoadDone, key]);
 
-  useEffect(() => {
-    if (storedValue) {
-      setValue(storedValue);
-    }
-  }, [storedValue]);
-
-  return [storedValue as T, setStoredValue] as const;
-};
+    // Return the original useState functions
+    return [storedValue, setStoredValue];
+}

@@ -1,12 +1,12 @@
 import { createContext } from "react";
 
 type TestNetContextType = {
-  testNet: boolean | null,
-  setTestNet: React.Dispatch<React.SetStateAction<boolean | null>>
+  testNet: boolean,
+  setTestNet: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const TestNetContextState = {
-  testNet: null,
+  testNet: false,
   setTestNet: () => {}
 }
 
