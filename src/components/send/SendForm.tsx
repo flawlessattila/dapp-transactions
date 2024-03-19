@@ -248,10 +248,10 @@ export const SendForm = () => {
           {availableCurrency}
         </ToggleButtonGroup>       
         <Typography level="title-sm" mt={1}>
-          Available: 
+          Available: {' '} 
           { balance.status === 'available'
             ? balance.current.formatted 
-            : '...' }
+            : '...' } {' '}
           {currency.nativeCurrency.symbol}
         </Typography>
         <form onSubmit={handleSubmit(onSubmit)}>
