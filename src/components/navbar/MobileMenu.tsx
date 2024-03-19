@@ -21,8 +21,6 @@ export function MobileMenu({ open, address, chains, onClose }: {
 }) {
   const {testNet, setTestNet} = useContext(TestNetContext)
 
-  console.log('mobile menu render', testNet)
-
   return (
     <Drawer
       sx={{

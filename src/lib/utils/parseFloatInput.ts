@@ -1,6 +1,5 @@
 export const parseFloatInput = (str: string) => {
   const pieces = str.split('.') || ['0'];
-  console.log(pieces)
   let pieceCount = 0;
   let formated = '';
   for (let i = 0; i < pieces.length; i++) {
