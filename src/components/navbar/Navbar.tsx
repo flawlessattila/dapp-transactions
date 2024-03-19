@@ -1,5 +1,5 @@
 'use client';
-import { appName } from '@/app.config';
+import { appName, appVersion } from '@/app.config';
 
 import React, { useEffect, useState, useContext } from 'react';
 import { useMetaMask } from 'metamask-react';
@@ -72,7 +72,6 @@ export default function Navbar() {
        address: account as `0x${string}`,
        chainId: id
       })
-      console.log(balance)
       return <Chip
       key={name}
       sx={{
@@ -85,7 +84,7 @@ export default function Navbar() {
         size="s"
         currencySymbol={name} />}
       >
-        {name} : {balance.formatted}
+        {name} {balance.formatted}
       </Chip>;
     }))
 
@@ -136,53 +135,64 @@ export default function Navbar() {
             level="title-lg">
             {appName}
           </Typography>
+          <Typography
+            alignSelf="flex-end"
+            color="neutral"
+            noWrap={true}
+            level="title-sm">
+            v{appVersion}
+          </Typography>
         </Stack>
-        {status === 'connected' && <Stack
-          alignItems="center"
-          justifyContent={{ sm: 'space-between', md: 'flex-end' }}
-          direction="row"
-          flexGrow={1}
-          width={{ sm: 1, md: 'auto' }}
-          sx={{
-            display: {
-              xs: 'none',
-              sm: 'flex'
-            }
-          }}
-          gap={2}>
+        {status === 'connected' 
+        && <>
           <Stack
-            gap={1}
+            alignItems="center"
+            justifyContent={{ sm: 'space-between', md: 'flex-end' }}
             direction="row"
-            flexWrap="wrap"
-            justifyContent={{ sm: 'flex-start', md: 'flex-end' }}>
-            {balanceChips && balanceChips?.length > 0 ? balanceChips : <CircularProgress size="sm" color="neutral" variant="plain"/> }
+            flexGrow={1}
+            width={{ sm: 1, md: 'auto' }}
+            sx={{
+              display: {
+                xs: 'none',
+                sm: 'flex'
+              }
+            }}
+            gap={2}>
+            <Stack
+              gap={1}
+              direction="row"
+              flexWrap="wrap"
+              justifyContent={{ sm: 'flex-start', md: 'flex-end' }}>
+              {balanceChips && balanceChips?.length > 0 ? balanceChips : <CircularProgress size="sm" color="neutral" variant="plain"/> }
+            </Stack>
+            <Dropdown>
+              <MenuButton variant="plain">
+                <Account address={address} />
+              </MenuButton>
+              <Menu placement="bottom-end">
+                <MenuItem onClick={() => {setTestNet((s) => !s)}}>
+                  <ListItemDecorator>
+                  {testNet ? <CodeOffOutlinedIcon /> : <CodeOutlinedIcon />} 
+                  </ListItemDecorator>
+                  Switch Testnet
+                </MenuItem>
+              </Menu>
+            </Dropdown>
           </Stack>
-          <Dropdown>
-            <MenuButton variant="plain">
-              <Account address={address} />
-            </MenuButton>
-            <Menu placement="bottom-end">
-              <MenuItem onClick={() => {setTestNet((s) => !s)}}>
-                <ListItemDecorator>
-                {testNet ? <CodeOffOutlinedIcon /> : <CodeOutlinedIcon />} 
-                </ListItemDecorator>
-                Switch Testnet
-              </MenuItem>
-            </Menu>
-          </Dropdown>
-        </Stack>}
-
-        <IconButton
-          sx={{
-            display: {
-              sm: 'none'
-            }
-          }}
-          color="primary"
-          onClick={() => toggleDrawer(true)}
-        >
-          <MenuOutlinedIcon />
-        </IconButton>
+          <IconButton
+            sx={{
+              display: {
+                sm: 'none'
+              }
+            }}
+            color="primary"
+            onClick={() => toggleDrawer(true)}
+          >
+            <MenuOutlinedIcon />
+          </IconButton> 
+        </>}
+        
+        
       </Stack>
     </>
   );

@@ -7,7 +7,7 @@ import { ConnectButton } from '@ui/ConnectButton';
 
 export function ConnectMetamask() {
 
-  const { status, connect} = useMetaMask();
+  const { status } = useMetaMask();
   
   return (
     <Stack 
@@ -38,7 +38,7 @@ export function ConnectMetamask() {
       { status === 'initializing' && <LinearProgress sx={{width:'100%'}} />}
 
       { (status === 'connecting' || status !== 'initializing' && status !== 'unavailable') 
-      ?  <ConnectButton onClick={connect} loading={status === 'connecting'}/> 
+      ?  <ConnectButton loading={status === 'connecting'}/> 
       : null}
 
       { status !== 'initializing' && status == 'unavailable' 

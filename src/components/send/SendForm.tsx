@@ -207,7 +207,6 @@ export const SendForm = () => {
       chainId: currency.id
      }).then((balance) => {
       setBalance({current: balance, status:'available'})
-      console.log(balance)
      })
 
   }, [currency, account])
@@ -248,8 +247,13 @@ export const SendForm = () => {
         > 
           {availableCurrency}
         </ToggleButtonGroup>       
-        <Typography level="title-sm" mt={1}>Available: {balance.status === 'available' ? balance.current.formatted : '...'} {currency.nativeCurrency.symbol}</Typography>
-
+        <Typography level="title-sm" mt={1}>
+          Available: 
+          { balance.status === 'available'
+            ? balance.current.formatted 
+            : '...' }
+          {currency.nativeCurrency.symbol}
+        </Typography>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Stack py={2} gap={1}>
           <Controller
@@ -267,9 +271,14 @@ export const SendForm = () => {
                         placeholder="0.000001" 
                         onChange={onChange}
                   />
-                  {parseFloat(formatted) < 0.000001 && <Typography mt={0.5} level="body-xs" color="danger">min.: 0.000001</Typography>}
-                  
-                
+                  { parseFloat(formatted) < 0.000001 
+                    && <Typography 
+                          mt={0.5} 
+                          level="body-xs" 
+                          color="danger"
+                        >
+                          min.: 0.000001
+                        </Typography>}
                 </FormControl>
               )
             }}
@@ -289,7 +298,14 @@ export const SendForm = () => {
                   }
                 })} 
               />
-              {errors?.address?.type === 'notAddress' && <Typography mt={0.5} level="body-xs" color="danger">Enter valid recepient address</Typography>}
+              {errors?.address?.type === 'notAddress' 
+                && <Typography 
+                      mt={0.5} 
+                      level="body-xs" 
+                      color="danger"
+                    >
+                      Enter valid recepient address
+                    </Typography>}
               {errors?.address?.type === 'yours' && <Typography mt={0.5} level="body-xs" color="danger">The specified address belongs to you</Typography>}
             </FormControl>
           </Stack>
@@ -297,8 +313,21 @@ export const SendForm = () => {
             mt={2}
             direction="row"
           >
-              {result.status === 'idle' && <Button  size="lg" type="submit">Send</Button>}
-              {result.status === 'loading' && <Button endDecorator={<CircularProgress/>} size="lg" disabled>Proccessing</Button>}
+              {result.status === 'idle' 
+                && <Button  
+                      size="lg"
+                      type="submit"
+                    >
+                      Send
+                    </Button>}
+              {result.status === 'loading' 
+                && <Button 
+                      endDecorator={<CircularProgress/>}
+                      size="lg" 
+                      disabled
+                    >
+                      Proccessing
+                    </Button>}
           </Stack>
         </form>
       </Stack>
