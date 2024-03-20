@@ -1,5 +1,8 @@
+import packageConfig from "./package.json";
+
 export const appName = "Transactions dApp";
-export const appVersion = "0.002";
+export const appVersion = packageConfig.version;
+
 export const colorSchemes = {
   colorSchemes: {
     light: {
