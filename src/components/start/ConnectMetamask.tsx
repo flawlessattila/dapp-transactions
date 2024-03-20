@@ -43,14 +43,11 @@ export function ConnectMetamask() {
             </Link>
           </NextLink>
         </Stack>
-
         {status === "initializing" && <LinearProgress sx={{ width: "100%" }} />}
-
         {status === "connecting" ||
         (status !== "initializing" && status !== "unavailable") ? (
           <ConnectButton loading={status === "connecting"} />
         ) : null}
-
         {status !== "initializing" && status == "unavailable" && (
           <>
             <Typography maxWidth={300} color="neutral">

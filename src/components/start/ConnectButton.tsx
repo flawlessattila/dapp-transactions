@@ -1,25 +1,23 @@
 import { Button, CircularProgress } from "@mui/joy";
 import LinkOutlinedIcon from "@mui/icons-material/LinkOutlined";
-import { connect } from "wagmi/actions";
-import { injected } from "wagmi/connectors";
-import { useConfig } from "wagmi";
+import { useConfig, useConnect } from "wagmi";
 
 export const ConnectButton = ({
   loading,
 }: {
   loading?: boolean | undefined;
 }) => {
-  const config = useConfig();
+  const { connect, status, connectors } = useConnect();
 
   const handleConnect = async () => {
     console.log("[CONNECTION] proccessing...");
-    const connectResult = await connect(config, { connector: injected() });
+    const connectResult = connect({ connector: connectors[0] });
     console.log("[CONNECTION] result", connectResult);
   };
 
   return (
     <>
-      {!loading && (
+      {status !== "pending" && (
         <Button
           size="lg"
           onClick={handleConnect}
@@ -28,8 +26,7 @@ export const ConnectButton = ({
           Connect MetaMask
         </Button>
       )}
-
-      {loading && (
+      {status == "pending" && (
         <Button
           size="lg"
           endDecorator={<CircularProgress />}
