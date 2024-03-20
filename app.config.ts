@@ -1,5 +1,5 @@
-export const appName = 'Transactions dApp';
-export const appVersion = '0.001';
+export const appName = "Transactions dApp";
+export const appVersion = "0.002";
 export const colorSchemes = {
   colorSchemes: {
     light: {
@@ -14,7 +14,7 @@ export const colorSchemes = {
           600: "#6114e4",
           700: "#4f05dc",
           800: "#3a00d7",
-          900: "#0000d0"
+          900: "#0000d0",
         },
       },
     },
@@ -30,9 +30,9 @@ export const colorSchemes = {
           600: "#6114e4",
           700: "#4f05dc",
           800: "#3a00d7",
-          900: "#0000d0"
+          900: "#0000d0",
         },
       },
     },
-  }
-}
+  },
+};
