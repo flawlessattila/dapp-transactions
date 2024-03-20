@@ -1,7 +1,7 @@
-import { Stack, Typography, Avatar } from '@mui/joy'
-import React from 'react'
+import { Stack, Typography, Avatar } from "@mui/joy";
+import React from "react";
 
-export function Account({address} : {address: string}) {
+export function Account({ address }: { address: string }) {
   return (
     <Stack
       justifyContent="space-between"
@@ -9,10 +9,8 @@ export function Account({address} : {address: string}) {
       direction="row"
       spacing={1}
     >
-      <Typography>
-        {address}
-      </Typography>
+      <Typography>{address}</Typography>
       <Avatar src="/static/avatar-fallback.svg" variant="outlined" />
     </Stack>
-  )
+  );
 }
