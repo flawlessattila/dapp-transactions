@@ -10,7 +10,7 @@ import {
   ListItemButton,
 } from "@mui/joy";
 
-import { Account } from "@ui/user/Account";
+import { Account } from "@/src/shared/ui/user/Account";
 import CodeOutlinedIcon from "@mui/icons-material/CodeOutlined";
 import CodeOffOutlinedIcon from "@mui/icons-material/CodeOffOutlined";
 

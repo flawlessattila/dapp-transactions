@@ -1,8 +1,6 @@
 "use client";
-import { appName, appVersion } from "@/app.config";
 
-import React, { useEffect, useState, useContext } from "react";
-import { useMetaMask } from "metamask-react";
+import { appName, appVersion } from "@/app.config";
 
 import {
   Typography,
@@ -13,23 +11,20 @@ import {
   MenuItem,
   ListItemDecorator,
   Dropdown,
-  Chip,
   CircularProgress,
+  Chip,
 } from "@mui/joy";
 
-import { useConfig } from "wagmi";
-import { getBalance } from "@wagmi/core";
 
-import { stringShorter } from "@lib/utils/stringShorter";
-import TestNetContext from "@lib/context/testnet.context";
 import { MobileMenu } from "./MobileMenu";
-import { Account } from "@ui/user/Account";
-import CryptoIcon from "@ui/crypto-icon/CryptoIcon";
+import { Account } from "@/src/shared/ui/user/Account";
 
 import AnimationOutlinedIcon from "@mui/icons-material/AnimationOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import CodeOffOutlinedIcon from "@mui/icons-material/CodeOffOutlined";
 import CodeOutlinedIcon from "@mui/icons-material/CodeOutlined";
+import { useNavbar } from "../model/use-navbar.hook";
+import CryptoIcon from "@ui/crypto-icon/CryptoIcon";
 
 const navbarContainerStyles = {
   flexDirection: {
@@ -47,83 +42,45 @@ const navbarContainerStyles = {
   borderColor: "divider",
 };
 
-export default function Navbar() {
-  const [balanceChips, setBalanceChips] = useState<React.ReactElement[] | null>(
-    [],
-  );
-  const [menu, setMenu] = useState(false);
-  const { status, account } = useMetaMask();
+export function Navbar() {
 
-  const { testNet, setTestNet } = useContext(TestNetContext);
+  const { 
+    metaMaskStatus,
+    address,
+    balance,
+    isMenuOpen,
+    testNet,
+    setTestNet,
+    toggleMenu 
+  } = useNavbar();
 
-  const config = useConfig();
 
-  const updateBalance = async () => {
-    setBalanceChips([]);
-    if (!account) {
-      return;
+  const balanceChips = balance.map((cur) => (<Chip
+    key={cur.name}
+    sx={{
+      userSelect: "none",
+    }}
+    variant="outlined"
+    startDecorator={
+      <CryptoIcon
+        height="12px"
+        width="12px"
+        size="s"
+        currencySymbol={cur.name}
+      />
     }
+  >
+    {cur.name} {cur.balance}
+  </Chip>))
 
-    const chains = config.chains.filter((chain) => {
-      if (testNet) {
-        return !!chain.testnet;
-      }
-      if (!testNet) {
-        return !chain.testnet;
-      }
-    });
-
-    const chips = await Promise.all(
-      chains.map(async ({ nativeCurrency, id, ...other }) => {
-        const name = nativeCurrency.symbol;
-        const balance = await getBalance(config, {
-          address: account as `0x${string}`,
-          chainId: id,
-        });
-        return (
-          <Chip
-            key={name}
-            sx={{
-              userSelect: "none",
-            }}
-            variant="outlined"
-            startDecorator={
-              <CryptoIcon
-                height="12px"
-                width="12px"
-                size="s"
-                currencySymbol={name}
-              />
-            }
-          >
-            {name} {balance.formatted}
-          </Chip>
-        );
-      }),
-    );
-
-    setBalanceChips(chips);
-  };
-
-  useEffect(() => {
-    if (status === "connected") {
-      updateBalance();
-    }
-  }, [status, account, config.chains, testNet]);
-
-  const address = stringShorter(account, 5);
-
-  const toggleDrawer = (inOpen: boolean) => {
-    setMenu(inOpen);
-  };
 
   return (
     <>
       <MobileMenu
-        open={menu}
+        open={isMenuOpen}
         address={address}
         chains={balanceChips}
-        onClose={() => toggleDrawer(false)}
+        onClose={() => toggleMenu(false)}
       />
       <Stack
         direction="row"
@@ -156,7 +113,7 @@ export default function Navbar() {
             v{appVersion}
           </Typography>
         </Stack>
-        {status === "connected" && (
+        {metaMaskStatus === "connected" && (
           <>
             <Stack
               alignItems="center"
@@ -209,7 +166,7 @@ export default function Navbar() {
                 },
               }}
               color="primary"
-              onClick={() => toggleDrawer(true)}
+              onClick={() => toggleMenu(true)}
             >
               <MenuOutlinedIcon />
             </IconButton>
