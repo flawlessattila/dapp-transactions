@@ -3,9 +3,9 @@
 import NextLink from "next/link";
 import { useMetaMask } from "metamask-react";
 import { LinearProgress, Link, Stack, Typography } from "@mui/joy";
-import { ConnectButton } from "@components/start/ConnectButton";
+import { ConnectButton } from "@widgets/ConnectButton";
 
-export function ConnectMetamask() {
+export function Setup() {
   const { status } = useMetaMask();
 
   return (
@@ -46,7 +46,7 @@ export function ConnectMetamask() {
         {status === "initializing" && <LinearProgress sx={{ width: "100%" }} />}
         {status === "connecting" ||
         (status !== "initializing" && status !== "unavailable") ? (
-          <ConnectButton loading={status === "connecting"} />
+          <ConnectButton/>
         ) : null}
         {status !== "initializing" && status == "unavailable" && (
           <>

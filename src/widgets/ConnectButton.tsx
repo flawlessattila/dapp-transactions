@@ -1,12 +1,8 @@
 import { Button, CircularProgress } from "@mui/joy";
 import LinkOutlinedIcon from "@mui/icons-material/LinkOutlined";
-import { useConfig, useConnect } from "wagmi";
+import { useConnect } from "wagmi";
 
-export const ConnectButton = ({
-  loading,
-}: {
-  loading?: boolean | undefined;
-}) => {
+export const ConnectButton = () => {
   const { connect, status, connectors } = useConnect();
 
   const handleConnect = async () => {
