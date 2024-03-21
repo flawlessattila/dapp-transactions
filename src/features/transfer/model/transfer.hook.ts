@@ -6,14 +6,14 @@ import { connect, getBalance, getConnections } from "wagmi/actions";
 import { Chain, parseEther } from "viem";
 import { type GetBalanceReturnType, sendTransaction } from "@wagmi/core";
 import { injected } from "wagmi/connectors";
-import { FieldValues, SubmitErrorHandler, SubmitHandler, useForm, UseFormHandleSubmit, UseFormReturn } from "react-hook-form";
+import { FieldValues, useForm, UseFormReturn } from "react-hook-form";
 
 type TransferResult = {
-  open: boolean,
-  success: boolean,
-  message: string,
-  status: "idle" | 'loading',
-}
+  open: boolean;
+  success: boolean;
+  message: string;
+  status: "idle" | "loading";
+};
 
 const defaultBalance = {
   current: {
@@ -32,24 +32,26 @@ const defaultResult = {
   status: "idle",
 } as TransferResult;
 
-export const useTransfer = ():{
-  account: string | null,
-  form: UseFormReturn,
-  chains: Chain[],
-  currency: Chain,
-  switchCurrency: (_: any, newValue: string | null) => void,
+export const useTransfer = (): {
+  account: string | null;
+  form: UseFormReturn;
+  chains: Chain[];
+  currency: Chain;
+  switchCurrency: (_: any, newValue: string | null) => void;
   balance: {
     current: GetBalanceReturnType;
     status: string;
-  },
-  handleSend: (e?: BaseSyntheticEvent<object, any, any> | undefined) => Promise<void>,
+  };
+  handleSend: (
+    e?: BaseSyntheticEvent<object, any, any> | undefined,
+  ) => Promise<void>;
   sendResult: {
-    open: boolean,
-    success: boolean,
-    message: string,
-    status: 'idle' | 'loading'
-  },
-  sendResultOnClose: () => void
+    open: boolean;
+    success: boolean;
+    message: string;
+    status: "idle" | "loading";
+  };
+  sendResultOnClose: () => void;
 } => {
   const config = useConfig();
   const form = useForm();
@@ -187,7 +189,17 @@ export const useTransfer = ():{
 
   const sendResultOnClose = () => {
     setSendResult((prevState) => ({ ...prevState, open: false }));
-  }
+  };
 
-  return {account, form, chains, currency, switchCurrency, balance, handleSend: form.handleSubmit(handleSend), sendResult, sendResultOnClose};
-}
+  return {
+    account,
+    form,
+    chains,
+    currency,
+    switchCurrency,
+    balance,
+    handleSend: form.handleSubmit(handleSend),
+    sendResult,
+    sendResultOnClose,
+  };
+};
