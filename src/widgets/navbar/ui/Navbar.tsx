@@ -15,7 +15,6 @@ import {
   Chip,
 } from "@mui/joy";
 
-
 import { MobileMenu } from "./MobileMenu";
 import { Account } from "@/src/shared/ui/user/Account";
 
@@ -43,36 +42,35 @@ const navbarContainerStyles = {
 };
 
 export function Navbar() {
-
-  const { 
+  const {
     metaMaskStatus,
     address,
     balance,
     isMenuOpen,
     testNet,
     setTestNet,
-    toggleMenu 
+    toggleMenu,
   } = useNavbar();
 
-
-  const balanceChips = balance.map((cur) => (<Chip
-    key={cur.name}
-    sx={{
-      userSelect: "none",
-    }}
-    variant="outlined"
-    startDecorator={
-      <CryptoIcon
-        height="12px"
-        width="12px"
-        size="s"
-        currencySymbol={cur.name}
-      />
-    }
-  >
-    {cur.name} {cur.balance}
-  </Chip>))
-
+  const balanceChips = balance.map((cur) => (
+    <Chip
+      key={cur.name}
+      sx={{
+        userSelect: "none",
+      }}
+      variant="outlined"
+      startDecorator={
+        <CryptoIcon
+          height="12px"
+          width="12px"
+          size="s"
+          currencySymbol={cur.name}
+        />
+      }
+    >
+      {cur.name} {cur.balance}
+    </Chip>
+  ));
 
   return (
     <>

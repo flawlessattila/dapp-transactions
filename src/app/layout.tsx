@@ -9,7 +9,7 @@ import { Inter } from "next/font/google";
 import { Stack } from "@mui/joy";
 import { Navbar } from "@/src/widgets/navbar";
 
-import { Providers } from "@/src/pages/_providers";
+import { Providers } from "@/src/_pages/_providers";
 import { appName } from "@/app.config";
 import wagmiConfig from "@/wagmi.config";
 
