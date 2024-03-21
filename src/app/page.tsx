@@ -1,3 +1,3 @@
-import { Page } from "@/src/pages/page";
+import { Page } from "@/src/pages/_page";
 
 export default Page;
